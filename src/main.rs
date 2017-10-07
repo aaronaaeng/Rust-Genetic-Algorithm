@@ -9,6 +9,8 @@ fn main() {
     println!("{}", best);
 }
 
+// Returns the target string created trhough iterations.  When a more fit string is
+// created, it is printed
 fn get_best(get_fitness: fn(&String,&str) -> usize,
     display: fn(&String, &str),
     target: &str,
@@ -17,6 +19,8 @@ fn get_best(get_fitness: fn(&String,&str) -> usize,
         let mut best_parent = generate_parent(gene_set, length);
         let mut best_fitness = get_fitness(&best_parent, target);
 
+// Randomly mutate and update the parent when the child is more fit than the parent.
+// Print when string is recreated
         while best_fitness < length {
             let child = mutate_parent(&best_parent, gene_set);
             let fitness = get_fitness(&child, target);
@@ -29,12 +33,15 @@ fn get_best(get_fitness: fn(&String,&str) -> usize,
         best_parent
     }
 
+// Generates a string the length of the target.  All chars are randomly selected from the
+// list of valid chars
 fn generate_parent(gene_set: &str, length: usize) -> String {
     let mut rng = thread_rng();
     let sample = sample(&mut rng, gene_set.chars(), length);
     sample.into_iter().collect()
 }
 
+// Returns the number of correct characters in the string
 fn get_fitness(candidate: &String, target: &str) -> usize {
     let different_count = target.chars()
         .zip(candidate.chars())
@@ -44,6 +51,7 @@ fn get_fitness(candidate: &String, target: &str) -> usize {
     target.len() - different_count
 }
 
+// Randomly changes one of the characters in the parent to another valid char
 fn mutate_parent(parent: &String, gene_set: &str) -> String {
     let mut rng = thread_rng();
     let gene_index = rng.gen::<usize>() % gene_set.len();
@@ -60,6 +68,7 @@ fn mutate_parent(parent: &String, gene_set: &str) -> String {
     candidate
 }
 
+// Prints to screen
 fn display(candidate: &String, target: &str) {
     println!("{}\t{}", candidate, get_fitness(&candidate, target));
 }
